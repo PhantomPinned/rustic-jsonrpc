@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter};
 use std::future::Future;
+use std::ops::{Deref, DerefMut};
 use std::pin::Pin;
 
 use serde::Serialize;
@@ -43,18 +44,6 @@ impl Registry {
             methods: HashMap::new(),
             post_call: None,
         }
-    }
-
-    /// Returns an immutable reference to the container.
-    #[inline]
-    pub fn container(&self) -> &Container {
-        &self.container
-    }
-
-    /// Returns a mutable reference to the container.
-    #[inline]
-    pub fn container_mut(&mut self) -> &Container {
-        &mut self.container
     }
 
     /// Registers a list of methods with the `Registry`.
@@ -150,6 +139,20 @@ impl Registry {
         let mut methods = self.methods.keys().map(|v| *v).collect::<Vec<_>>();
         methods.sort();
         methods
+    }
+}
+
+impl Deref for Registry {
+    type Target = Container;
+
+    fn deref(&self) -> &Self::Target {
+        &self.container
+    }
+}
+
+impl DerefMut for Registry {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.container
     }
 }
 
